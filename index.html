@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resume Match: score your resume against a job</title>
+
+    <!-- Tailwind via the browser CDN: no build step, ideal for learning. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Reads PDF text in the browser. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <!-- Reads .docx text in the browser. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  </head>
+
+  <body class="min-h-screen bg-slate-950 text-slate-100 antialiased">
+    <!-- Top bar -->
+    <header class="border-b border-slate-800">
+      <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <span class="text-lg font-semibold tracking-tight">Resume<span class="text-indigo-400">Match</span></span>
+        <a href="#tool" class="rounded-lg bg-indigo-500 px-4 py-2 text-sm font-medium hover:bg-indigo-400">Get started</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- Hero -->
+      <section class="mx-auto max-w-4xl px-6 pb-12 pt-20 text-center">
+        <p class="mb-4 text-sm font-medium uppercase tracking-widest text-indigo-400">Know before you apply</p>
+        <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">
+          See how well your resume fits the job
+        </h1>
+        <p class="mx-auto mt-6 max-w-2xl text-lg text-slate-400">
+          Drop in your resume (PDF, Word or text) and paste the job description.
+          You get a scorecard with what matches, what is missing, and what to fix.
+        </p>
+      </section>
+
+      <!-- Inputs -->
+      <section id="tool" class="mx-auto grid max-w-6xl gap-6 px-6 md:grid-cols-2">
+        <!-- Drop zone -->
+        <div>
+          <h2 class="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">1. Your resume</h2>
+          <label
+            id="dropzone"
+            for="resume-file"
+            class="flex h-72 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-700 bg-slate-900 p-6 text-center transition hover:border-indigo-400"
+          >
+            <input id="resume-file" type="file" accept=".pdf,.docx,.txt,.md" class="sr-only" />
+            <svg class="mb-4 h-12 w-12 text-indigo-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+            </svg>
+            <p class="font-medium">Drag and drop your resume here</p>
+            <p class="mt-1 text-sm text-slate-500">or click to browse. PDF, DOCX, TXT or MD.</p>
+            <p id="file-name" class="mt-4 text-sm text-indigo-300">No file loaded</p>
+          </label>
+        </div>
+
+        <!-- Job description -->
+        <div>
+          <h2 class="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">2. Job description</h2>
+          <textarea
+            id="jd"
+            placeholder="Paste the full job posting here..."
+            class="h-72 w-full resize-none rounded-2xl border border-slate-700 bg-slate-900 p-5 text-sm leading-relaxed placeholder:text-slate-600 focus:border-indigo-400 focus:outline-none"
+          ></textarea>
+        </div>
+      </section>
+
+      <div class="mx-auto max-w-6xl px-6 py-8 text-center">
+        <button id="compare-btn" class="rounded-xl bg-indigo-500 px-8 py-3 font-semibold shadow-lg shadow-indigo-500/20 hover:bg-indigo-400">
+          Score my resume
+        </button>
+        <p id="error" class="mt-4 hidden text-sm text-red-400"></p>
+      </div>
+
+      <!-- Scorecard -->
+      <section id="results" class="mx-auto hidden max-w-6xl space-y-6 px-6 pb-24">
+        <div class="grid gap-6 md:grid-cols-3">
+          <!-- Overall -->
+          <div class="flex flex-col items-center justify-center rounded-2xl border border-slate-800 bg-slate-900 p-8 md:col-span-1">
+            <div id="ring" class="flex h-40 w-40 items-center justify-center rounded-full">
+              <div class="flex h-32 w-32 flex-col items-center justify-center rounded-full bg-slate-900">
+                <span id="overall" class="text-4xl font-bold">0</span>
+                <span class="text-xs text-slate-500">out of 100</span>
+              </div>
+            </div>
+            <p id="verdict" class="mt-6 text-center text-sm text-slate-300"></p>
+          </div>
+
+          <!-- Breakdown -->
+          <div id="metrics" class="grid gap-4 sm:grid-cols-2 md:col-span-2"></div>
+        </div>
+
+        <div class="grid gap-6 md:grid-cols-2">
+          <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+            <h3 class="mb-3 font-semibold text-emerald-400">Strengths</h3>
+            <ul id="strengths" class="list-disc space-y-2 pl-5 text-sm text-slate-300"></ul>
+          </div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+            <h3 class="mb-3 font-semibold text-rose-400">Weaknesses</h3>
+            <ul id="weaknesses" class="list-disc space-y-2 pl-5 text-sm text-slate-300"></ul>
+          </div>
+        </div>
+
+        <div class="grid gap-6 md:grid-cols-2">
+          <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+            <h3 class="mb-3 font-semibold text-emerald-400">Found in your resume</h3>
+            <div id="matched" class="flex flex-wrap gap-2"></div>
+          </div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+            <h3 class="mb-3 font-semibold text-rose-400">Missing from your resume</h3>
+            <div id="missing" class="flex flex-wrap gap-2"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
