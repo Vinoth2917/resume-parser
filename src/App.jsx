@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
+import SectionHeading from "./components/SectionHeading";
 import DropZone from "./components/DropZone";
 import JobDescription from "./components/JobDescription";
 import ErrorMessage from "./components/ErrorMessage";
@@ -18,21 +19,23 @@ export default function App() {
   return (
     <>
       <Header />
-      <main>
+      <main className="page">
         <Hero />
 
-        <section id="tool" className="mx-auto grid max-w-6xl gap-6 px-6 md:grid-cols-2">
-          <DropZone fileLabel={resume.fileLabel} onFile={resume.loadFile} />
-          <JobDescription value={jd} onChange={setJd} />
+        <section id="check" className="check">
+          <div>
+            <SectionHeading title="Your résumé" help="PDF, Word (.docx), text or Markdown." />
+            <DropZone fileLabel={resume.fileLabel} onFile={resume.loadFile} />
+          </div>
+          <div>
+            <SectionHeading title="The job posting" help="Paste all of it. Short posts give weak scores." />
+            <JobDescription value={jd} onChange={setJd} />
+          </div>
         </section>
 
-        <div className="mx-auto max-w-6xl px-6 py-8 text-center">
-          <button
-            type="button"
-            onClick={() => scorecard.score(jd)}
-            className="rounded-xl bg-indigo-500 px-8 py-3 font-semibold shadow-lg shadow-indigo-500/20 hover:bg-indigo-400"
-          >
-            Score my resume
+        <div className="check__action">
+          <button type="button" className="button" onClick={() => scorecard.score(jd)}>
+            Score my résumé
           </button>
           <ErrorMessage message={error} />
         </div>

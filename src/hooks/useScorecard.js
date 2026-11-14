@@ -18,7 +18,7 @@ export function useScorecard(resumeText) {
       return;
     }
     try {
-      setResult(analyze(resumeText, trimmed));
+      setResult({ ...analyze(resumeText, trimmed), resumeText });
     } catch (err) {
       setError(err.message);
     }

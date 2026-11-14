@@ -3,17 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Resume Match: score your resume against a job</title>
+    <title>Resume Match: see how your résumé fits the job</title>
 
-    <!-- Tailwind via the browser CDN: no build step for styles. -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Newsreader for display type, Atkinson Hyperlegible for reading. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400..700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- Reads PDF text in the browser. Exposes window.pdfjsLib. -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <!-- Reads .docx text in the browser. Exposes window.mammoth. -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   </head>
 
-  <body class="min-h-screen bg-slate-950 text-slate-100 antialiased">
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

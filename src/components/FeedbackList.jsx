@@ -1,18 +1,17 @@
-import Card from "./Card";
-
-// A titled bulleted list. Shows emptyText as a single item when there is nothing to list.
-export default function FeedbackList({ title, titleClassName, items, emptyText }) {
+// A titled list of plain-language notes, with a hairline between each one.
+export default function FeedbackList({ title, items, emptyText }) {
   const list = items.length ? items : [emptyText];
+
   return (
-    <Card className="p-6">
-      <h3 className={`mb-3 font-semibold ${titleClassName}`}>{title}</h3>
-      <ul className="list-disc space-y-2 pl-5 text-sm text-slate-300">
+    <div>
+      <h3 className="subhead">{title}</h3>
+      <ul className="notes">
         {list.map((item) => (
-          <li key={item} className="leading-relaxed">
+          <li key={item} className="notes__item">
             {item}
           </li>
         ))}
       </ul>
-    </Card>
+    </div>
   );
 }
